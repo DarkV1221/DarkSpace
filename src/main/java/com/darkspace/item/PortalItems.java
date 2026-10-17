@@ -19,12 +19,14 @@ public final class PortalItems {
     public static final Item REFINED_PORTAL_CELL = register("refined_portal_cell", Item::new);
     public static final Item QUANTUM_PORTAL_CELL = register("quantum_portal_cell", Item::new);
     public static final Item RADIANT_PILLAR_SHIP = register("radiant_pillar_ship", RadiantPillarShipItem::new);
+    public static final Item STEEL_INGOT = register("steel_ingot", Item::new);
+    public static final Item SHIP_COMPUTER = register("ship_computer", ShipComputerItem::new);
 
     public static final ItemGroup PORTAL_ITEM_GROUP = Registry.register(
             Registries.ITEM_GROUP,
             Identifier.of(DarkSpace.MOD_ID, "portal_items"),
             FabricItemGroup.builder()
-                    .icon(() -> new ItemStack(PLANETARY_PORTAL_GUN))
+                    .icon(() -> new ItemStack(SHIP_COMPUTER))
                     .displayName(Text.translatable("itemGroup.darkspace.portal_items"))
                     .entries((context, entries) -> {
                         entries.add(PLANETARY_PORTAL_GUN);
@@ -32,6 +34,8 @@ public final class PortalItems {
                         entries.add(REFINED_PORTAL_CELL);
                         entries.add(QUANTUM_PORTAL_CELL);
                         entries.add(RADIANT_PILLAR_SHIP);
+                        entries.add(STEEL_INGOT);
+                        entries.add(SHIP_COMPUTER);
                     })
                     .build()
     );
@@ -50,14 +54,16 @@ public final class PortalItems {
                 .register(entries -> {
                     entries.add(PLANETARY_PORTAL_GUN);
                     entries.add(RADIANT_PILLAR_SHIP);
+                    entries.add(SHIP_COMPUTER);
                 });
         net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents.modifyEntriesEvent(ItemGroups.INGREDIENTS)
                 .register(entries -> {
                     entries.add(PORTAL_CELL);
                     entries.add(REFINED_PORTAL_CELL);
                     entries.add(QUANTUM_PORTAL_CELL);
+                    entries.add(STEEL_INGOT);
                 });
-        DarkSpace.LOGGER.info("Registered DarkSpace portal items and creative tab.");
+        DarkSpace.LOGGER.info("Registered DarkSpace items and creative tab.");
     }
 
     public static int fuelTier(Item item) {
