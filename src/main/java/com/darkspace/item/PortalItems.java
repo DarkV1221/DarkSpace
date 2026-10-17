@@ -33,7 +33,9 @@ public final class PortalItems {
                         entries.add(PORTAL_CELL);
                         entries.add(REFINED_PORTAL_CELL);
                         entries.add(QUANTUM_PORTAL_CELL);
-                        entries.add(RADIANT_PILLAR_SHIP);\n                    entries.add(SHIP_COMPUTER);\n                    entries.add(SHIP_BLUEPRINT);\n                        entries.add(SHIP_COMPUTER);\n                        entries.add(SHIP_BLUEPRINT);
+                        entries.add(RADIANT_PILLAR_SHIP);
+                        entries.add(SHIP_COMPUTER);
+                        entries.add(SHIP_BLUEPRINT);
                     })
                     .build()
     );
@@ -52,6 +54,8 @@ public final class PortalItems {
                 .register(entries -> {
                     entries.add(PLANETARY_PORTAL_GUN);
                     entries.add(RADIANT_PILLAR_SHIP);
+                    entries.add(SHIP_COMPUTER);
+                    entries.add(SHIP_BLUEPRINT);
                 });
         net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents.modifyEntriesEvent(ItemGroups.INGREDIENTS)
                 .register(entries -> {
