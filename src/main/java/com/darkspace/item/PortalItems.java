@@ -19,6 +19,8 @@ public final class PortalItems {
     public static final Item REFINED_PORTAL_CELL = register("refined_portal_cell", Item::new);
     public static final Item QUANTUM_PORTAL_CELL = register("quantum_portal_cell", Item::new);
     public static final Item RADIANT_PILLAR_SHIP = register("radiant_pillar_ship", RadiantPillarShipItem::new);
+    public static final Item SHIP_COMPUTER = register("ship_computer", ShipComputerItem::new);
+    public static final Item SHIP_BLUEPRINT = register("ship_blueprint", ShipBlueprintItem::new);
 
     public static final ItemGroup PORTAL_ITEM_GROUP = Registry.register(
             Registries.ITEM_GROUP,
@@ -31,7 +33,7 @@ public final class PortalItems {
                         entries.add(PORTAL_CELL);
                         entries.add(REFINED_PORTAL_CELL);
                         entries.add(QUANTUM_PORTAL_CELL);
-                        entries.add(RADIANT_PILLAR_SHIP);
+                        entries.add(RADIANT_PILLAR_SHIP);\n                    entries.add(SHIP_COMPUTER);\n                    entries.add(SHIP_BLUEPRINT);\n                        entries.add(SHIP_COMPUTER);\n                        entries.add(SHIP_BLUEPRINT);
                     })
                     .build()
     );
@@ -57,7 +59,7 @@ public final class PortalItems {
                     entries.add(REFINED_PORTAL_CELL);
                     entries.add(QUANTUM_PORTAL_CELL);
                 });
-        DarkSpace.LOGGER.info("Registered DarkSpace portal items and creative tab.");
+        DarkSpace.LOGGER.info("Registered DarkSpace items, ship computer, and creative tab.");
     }
 
     public static int fuelTier(Item item) {
