@@ -23,11 +23,9 @@ public final class RadiantPillarShipItem extends Item {
         BlockPos origin = context.getBlockPos().offset(context.getSide());
         Map<BlockPos, BlockState> build = createShip(origin);
 
-        // Refuse placement if the whole ship does not fit, so it never overwrites a build.
+        // Never overwrite terrain or player builds; require the complete footprint to be clear.
         for (BlockPos pos : build.keySet()) {
-            if (!world.getBlockState(pos).isReplaceable()) {
-                return ActionResult.FAIL;
-            }
+            if (!world.getBlockState(pos).isReplaceable()) return ActionResult.FAIL;
         }
 
         if (!world.isClient) {
@@ -39,38 +37,82 @@ public final class RadiantPillarShipItem extends Item {
         return ActionResult.SUCCESS;
     }
 
-    private static Map<BlockPos, BlockState> createShip(BlockPos origin) {
-        Map<BlockPos, BlockState> blocks = new LinkedHashMap<>();
-        BlockState hull = Blocks.SMOOTH_QUARTZ.getDefaultState();
-        BlockState glass = Blocks.CYAN_STAINED_GLASS.getDefaultState();
-        BlockState glow = Blocks.SEA_LANTERN.getDefaultState();
-        BlockState fin = Blocks.END_ROD.getDefaultState();
+    /**
+     * Builds a low, horizontal, red-and-white exploration fighter inspired by classic
+     * space-sim starfighters. The nose points toward negative Z.
+     */
+    private static Map<BlockPos, BlockState> createShip(BlockPos o) {
+        Map<BlockPos, BlockState> b = new LinkedHashMap<>();
+        BlockState white = Blocks.QUARTZ_BLOCK.getDefaultState();
+        BlockState bright = Blocks.SMOOTH_QUARTZ.getDefaultState();
+        BlockState red = Blocks.RED_CONCRETE.getDefaultState();
+        BlockState redAccent = Blocks.RED_TERRACOTTA.getDefaultState();
+        BlockState dark = Blocks.POLISHED_BLACKSTONE.getDefaultState();
+        BlockState canopy = Blocks.BLACK_STAINED_GLASS.getDefaultState();
+        BlockState engine = Blocks.SEA_LANTERN.getDefaultState();
+        BlockState trim = Blocks.IRON_BLOCK.getDefaultState();
 
-        // A tall luminous spacecraft: central spine, radiant core, and swept side fins.
-        for (int y = 0; y <= 5; y++) {
-            put(blocks, origin, 0, y, 0, y == 2 || y == 4 ? glow : hull);
-        }
-        put(blocks, origin, 0, 6, 0, glow);
-        put(blocks, origin, 0, 7, 0, fin);
+        // Main fuselage: tapered nose, broad midsection, and engine housing.
+        put(b,o,0,0,-5,bright);
+        for (int x=-1;x<=1;x++) put(b,o,x,0,-4, x==0?white:bright);
+        for (int x=-1;x<=1;x++) put(b,o,x,0,-3,white);
+        for (int x=-1;x<=1;x++) put(b,o,x,0,-2,white);
+        for (int x=-2;x<=2;x++) put(b,o,x,0,-1, x==0?bright:white);
+        for (int x=-2;x<=2;x++) put(b,o,x,0,0, x==0?bright:white);
+        for (int x=-2;x<=2;x++) put(b,o,x,0,1, x==0?bright:white);
+        for (int x=-2;x<=2;x++) put(b,o,x,0,2,white);
+        for (int x=-1;x<=1;x++) put(b,o,x,0,3,bright);
+        for (int x=-1;x<=1;x++) put(b,o,x,0,4,trim);
 
-        for (int x : new int[]{-2, -1, 1, 2}) {
-            put(blocks, origin, x, 3, 0, Math.abs(x) == 2 ? hull : glass);
-            put(blocks, origin, x, 2, 0, Math.abs(x) == 2 ? fin : glow);
-            put(blocks, origin, x, 4, 0, Math.abs(x) == 2 ? fin : glass);
+        // Swept, delta-shaped wings. Red leading edges and tips make the silhouette read
+        // clearly from above instead of looking like a vertical block sculpture.
+        wingRow(b,o,-1,0, -2, 2, white, red);
+        wingRow(b,o, 0,0, -3, 3, white, red);
+        wingRow(b,o, 1,0, -4, 4, white, red);
+        wingRow(b,o, 2,0, -4, 4, white, red);
+        wingRow(b,o, 3,0, -3, 3, white, red);
+        wingRow(b,o, 4,0, -2, 2, white, red);
+
+        // Red outer panels, white inner panels, and small dark control-surface details.
+        for (int x : new int[]{-4,4}) {
+            put(b,o,x,0,1,redAccent);
+            put(b,o,x,0,2,red);
         }
-        for (int z : new int[]{-1, 1}) {
-            put(blocks, origin, 0, 3, z, glass);
-            put(blocks, origin, 0, 4, z, glow);
+        for (int x : new int[]{-3,3}) {
+            put(b,o,x,0,0,red);
+            put(b,o,x,0,3,redAccent);
         }
-        for (int x : new int[]{-1, 1}) {
-            put(blocks, origin, x, 1, 0, hull);
-            put(blocks, origin, x, 5, 0, glass);
+        put(b,o,-2,0,1,redAccent); put(b,o,2,0,1,redAccent);
+        put(b,o,-2,0,2,red); put(b,o,2,0,2,red);
+
+        // Raised cockpit, canopy glazing, and white dorsal spine.
+        put(b,o,0,1,-2,white);
+        put(b,o,0,1,-1,canopy);
+        put(b,o,0,1,0,canopy);
+        put(b,o,0,1,1,white);
+        put(b,o,0,1,2,bright);
+        put(b,o,-1,1,-1,redAccent); put(b,o,1,1,-1,redAccent);
+
+        // Twin rear engine bells with luminous cores and dark exhaust surrounds.
+        for (int x : new int[]{-1,1}) {
+            put(b,o,x,0,3,dark);
+            put(b,o,x,0,4,engine);
+            put(b,o,x,1,3,trim);
         }
-        return blocks;
+        put(b,o,0,0,4,bright);
+        return b;
+    }
+
+    private static void wingRow(Map<BlockPos, BlockState> b, BlockPos o, int z, int y,
+                                int minX, int maxX, BlockState white, BlockState red) {
+        for (int x=minX;x<=maxX;x++) {
+            boolean edge = Math.abs(x) == Math.max(Math.abs(minX), Math.abs(maxX));
+            put(b,o,x,y,z,edge ? red : white);
+        }
     }
 
     private static void put(Map<BlockPos, BlockState> blocks, BlockPos origin,
                             int x, int y, int z, BlockState state) {
-        blocks.put(origin.add(x, y, z), state);
+        blocks.put(origin.add(x,y,z),state);
     }
 }
