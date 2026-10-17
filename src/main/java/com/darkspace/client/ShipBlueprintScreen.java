@@ -12,7 +12,6 @@ import net.minecraft.component.type.NbtComponent;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NbtCompound;
 import net.minecraft.registry.Registries;
 import net.minecraft.text.Text;
 import net.minecraft.util.Hand;
@@ -53,8 +52,8 @@ public final class ShipBlueprintScreen extends Screen {
         ItemStack stack = player.getStackInHand(hand);
         NbtComponent customData = stack.get(DataComponentTypes.CUSTOM_DATA);
         if (customData == null) return;
-        String encoded = customData.copyNbt().getString("blueprint");
-        if (encoded == null || encoded.isBlank()) return;
+        String encoded = customData.copyNbt().getString("blueprint").orElse("");
+        if (encoded.isBlank()) return;
 
         String[] sections = encoded.split(";", 2);
         if (sections.length != 2) return;
