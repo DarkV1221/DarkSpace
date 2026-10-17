@@ -1,13 +1,16 @@
 package com.darkspace.item;
 
 import com.darkspace.DarkSpace;
-import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
+import net.fabricmc.fabric.api.itemgroup.v1.FabricItemGroup;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemGroups;
+import net.minecraft.item.ItemStack;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
 import net.minecraft.registry.RegistryKey;
 import net.minecraft.registry.RegistryKeys;
+import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 
 public final class PortalItems {
@@ -15,6 +18,21 @@ public final class PortalItems {
     public static final Item PORTAL_CELL = register("portal_cell", Item::new);
     public static final Item REFINED_PORTAL_CELL = register("refined_portal_cell", Item::new);
     public static final Item QUANTUM_PORTAL_CELL = register("quantum_portal_cell", Item::new);
+
+    public static final ItemGroup PORTAL_ITEM_GROUP = Registry.register(
+            Registries.ITEM_GROUP,
+            Identifier.of(DarkSpace.MOD_ID, "portal_items"),
+            FabricItemGroup.builder()
+                    .icon(() -> new ItemStack(PLANETARY_PORTAL_GUN))
+                    .displayName(Text.translatable("itemGroup.darkspace.portal_items"))
+                    .entries((context, entries) -> {
+                        entries.add(PLANETARY_PORTAL_GUN);
+                        entries.add(PORTAL_CELL);
+                        entries.add(REFINED_PORTAL_CELL);
+                        entries.add(QUANTUM_PORTAL_CELL);
+                    })
+                    .build()
+    );
 
     private PortalItems() {}
 
@@ -26,13 +44,16 @@ public final class PortalItems {
     }
 
     public static void initialize() {
-        ItemGroupEvents.modifyEntriesEvent(ItemGroups.TOOLS).register(entries -> entries.add(PLANETARY_PORTAL_GUN));
-        ItemGroupEvents.modifyEntriesEvent(ItemGroups.INGREDIENTS).register(entries -> {
-            entries.add(PORTAL_CELL);
-            entries.add(REFINED_PORTAL_CELL);
-            entries.add(QUANTUM_PORTAL_CELL);
-        });
-        DarkSpace.LOGGER.info("Registered DarkSpace portal items.");
+        // Also list portal items in familiar vanilla tabs.
+        net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents.modifyEntriesEvent(ItemGroups.TOOLS)
+                .register(entries -> entries.add(PLANETARY_PORTAL_GUN));
+        net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents.modifyEntriesEvent(ItemGroups.INGREDIENTS)
+                .register(entries -> {
+                    entries.add(PORTAL_CELL);
+                    entries.add(REFINED_PORTAL_CELL);
+                    entries.add(QUANTUM_PORTAL_CELL);
+                });
+        DarkSpace.LOGGER.info("Registered DarkSpace portal items and creative tab.");
     }
 
     public static int fuelTier(Item item) {
