@@ -6,6 +6,7 @@ A Minecraft space exploration mod targeting **Minecraft Java Edition 1.21.8**, F
 
 - Defines Peaceful, Normal, Hard, and Nightmare difficulty levels.
 - Includes a confirmation-based difficulty selection screen.
+- Adds buttons intended for the world-creation and pause menus.
 - Persists the selected choice to `config/darkspace-difficulty.json` on the local client.
 
 ## Prototype limitations
