@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - feature/planetary-portal-gun
+      - feature/ship-blueprints-computer
   workflow_dispatch:
 
 permissions:
