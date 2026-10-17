@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "SSS",
+    " I ",
+    "CCC"
+  ],
+  "key": {
+    "S": { "item": "darkspace:steel_ingot" },
+    "I": { "item": "minecraft:iron_ingot" },
+    "C": { "item": "minecraft:copper_ingot" }
+  },
+  "result": {
+    "id": "darkspace:ship_computer",
+    "count": 1
+  }
+}
