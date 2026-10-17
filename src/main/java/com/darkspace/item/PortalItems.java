@@ -21,6 +21,8 @@ public final class PortalItems {
     public static final Item RADIANT_PILLAR_SHIP = register("radiant_pillar_ship", RadiantPillarShipItem::new);
     public static final Item STEEL_INGOT = register("steel_ingot", Item::new);
     public static final Item SHIP_COMPUTER = register("ship_computer", ShipComputerItem::new);
+    public static final Item NAVIGATION_COMPUTER = register("navigation_computer", Item::new);
+    public static final Item HYPERDRIVE = register("hyperdrive", Item::new);
 
     public static final ItemGroup PORTAL_ITEM_GROUP = Registry.register(
             Registries.ITEM_GROUP,
@@ -36,6 +38,8 @@ public final class PortalItems {
                         entries.add(RADIANT_PILLAR_SHIP);
                         entries.add(STEEL_INGOT);
                         entries.add(SHIP_COMPUTER);
+                        entries.add(NAVIGATION_COMPUTER);
+                        entries.add(HYPERDRIVE);
                     })
                     .build()
     );
@@ -55,6 +59,8 @@ public final class PortalItems {
                     entries.add(PLANETARY_PORTAL_GUN);
                     entries.add(RADIANT_PILLAR_SHIP);
                     entries.add(SHIP_COMPUTER);
+                    entries.add(NAVIGATION_COMPUTER);
+                    entries.add(HYPERDRIVE);
                 });
         net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents.modifyEntriesEvent(ItemGroups.INGREDIENTS)
                 .register(entries -> {
