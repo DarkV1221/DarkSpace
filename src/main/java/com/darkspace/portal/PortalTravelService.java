@@ -8,6 +8,7 @@ import net.minecraft.server.world.ServerWorld;
 import net.minecraft.registry.RegistryKey;
 import net.minecraft.registry.RegistryKeys;
 import net.minecraft.text.Text;
+import net.minecraft.particle.ParticleTypes;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.Heightmap;
@@ -101,6 +102,13 @@ public final class PortalTravelService {
         }
 
         fuel.decrement(1);
+
+        // Nebula-purple portal burst at the arrival point.
+        targetWorld.spawnParticles(ParticleTypes.PORTAL, player.getX(), player.getY() + 1.0, player.getZ(),
+                70, 0.65, 0.9, 0.65, 0.08);
+        targetWorld.spawnParticles(ParticleTypes.REVERSE_PORTAL, player.getX(), player.getY() + 1.0, player.getZ(),
+                35, 0.45, 0.7, 0.45, 0.04);
+
         player.sendMessage(Text.literal("Portal jump complete: " + destination.name() + "."), true);
         recordVisit(player);
     }
