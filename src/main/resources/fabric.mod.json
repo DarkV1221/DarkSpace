@@ -4,17 +4,29 @@
   "version": "${version}",
   "name": "DarkSpace",
   "description": "A space exploration mod for Minecraft.",
-  "authors": ["DarkV1221"],
+  "authors": [
+    "DarkV1221"
+  ],
   "license": "MIT",
   "environment": "*",
   "entrypoints": {
-    "main": ["com.darkspace.DarkSpace"],
-    "client": ["com.darkspace.client.DarkSpaceClient"]
+    "main": [
+      "com.darkspace.DarkSpace"
+    ],
+    "client": [
+      "com.darkspace.client.DarkSpaceClient"
+    ]
   },
   "depends": {
     "fabricloader": ">=0.16.0",
     "minecraft": "~1.21.8",
     "java": ">=21",
     "fabric-api": "*"
-  }
+  },
+  "mixins": [
+    {
+      "config": "darkspace.client.mixins.json",
+      "environment": "client"
+    }
+  ]
 }
