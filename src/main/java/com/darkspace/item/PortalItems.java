@@ -6,18 +6,23 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroups;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
+import net.minecraft.registry.RegistryKey;
+import net.minecraft.registry.RegistryKeys;
 import net.minecraft.util.Identifier;
 
 public final class PortalItems {
-    public static final Item PLANETARY_PORTAL_GUN = register("planetary_portal_gun", new PlanetaryPortalGunItem(new Item.Settings().maxCount(1)));
-    public static final Item PORTAL_CELL = register("portal_cell", new Item(new Item.Settings()));
-    public static final Item REFINED_PORTAL_CELL = register("refined_portal_cell", new Item(new Item.Settings()));
-    public static final Item QUANTUM_PORTAL_CELL = register("quantum_portal_cell", new Item(new Item.Settings()));
+    public static final Item PLANETARY_PORTAL_GUN = register("planetary_portal_gun", PlanetaryPortalGunItem::new);
+    public static final Item PORTAL_CELL = register("portal_cell", Item::new);
+    public static final Item REFINED_PORTAL_CELL = register("refined_portal_cell", Item::new);
+    public static final Item QUANTUM_PORTAL_CELL = register("quantum_portal_cell", Item::new);
 
     private PortalItems() {}
 
-    private static Item register(String name, Item item) {
-        return Registry.register(Registries.ITEM, Identifier.of(DarkSpace.MOD_ID, name), item);
+    private static Item register(String name, java.util.function.Function<Item.Settings, Item> factory) {
+        Identifier id = Identifier.of(DarkSpace.MOD_ID, name);
+        Item.Settings settings = new Item.Settings()
+                .registryKey(RegistryKey.of(RegistryKeys.ITEM, id));
+        return Registry.register(Registries.ITEM, id, factory.apply(settings));
     }
 
     public static void initialize() {
