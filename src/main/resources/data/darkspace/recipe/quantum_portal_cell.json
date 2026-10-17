@@ -1,0 +1,23 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    " E ",
+    "DAD",
+    " E "
+  ],
+  "key": {
+    "E": {
+      "item": "minecraft:echo_shard"
+    },
+    "D": {
+      "item": "minecraft:diamond"
+    },
+    "A": {
+      "item": "darkspace:refined_portal_cell"
+    }
+  },
+  "result": {
+    "id": "darkspace:quantum_portal_cell",
+    "count": 1
+  }
+}
