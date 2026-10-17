@@ -4,7 +4,8 @@
   "item.darkspace.refined_portal_cell": "Refined Portal Cell",
   "item.darkspace.quantum_portal_cell": "Quantum Portal Cell",
   "item.darkspace.radiant_pillar_ship": "Radiant Pillar Ship",
+  "item.darkspace.steel_ingot": "Steel Ingot",
   "itemGroup.darkspace.portal_items": "DarkSpace",
   "item.darkspace.ship_computer": "Ship Computer",
   "item.darkspace.ship_blueprint": "Ship Blueprint"
-}\n
+}
