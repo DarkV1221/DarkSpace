@@ -1,0 +1,12 @@
+{
+  "required": true,
+  "package": "com.darkspace.mixin.client",
+  "compatibilityLevel": "JAVA_21",
+  "client": [
+    "GameMenuScreenMixin",
+    "CreateWorldScreenMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}
