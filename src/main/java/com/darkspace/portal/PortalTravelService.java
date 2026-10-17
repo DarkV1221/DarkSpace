@@ -26,7 +26,11 @@ public final class PortalTravelService {
         String currentId = player.getWorld().getRegistryKey().getValue().toString();
         PlanetDestination destination = PlanetDestination.find(currentId);
         if (destination != null) {
-            player.addCommandTag(discoveryTag(destination));
+            String tag = discoveryTag(destination);
+            if (!player.getCommandTags().contains(tag)) {
+                player.addCommandTag(tag);
+                player.sendMessage(Text.literal("Planet discovered: " + destination.name() + "!"), true);
+            }
         }
     }
 
@@ -88,7 +92,8 @@ public final class PortalTravelService {
                 top.getZ() + 0.5,
                 Set.of(),
                 player.getYaw(),
-                player.getPitch()
+                player.getPitch(),
+                true
         );
         if (!teleported) {
             player.sendMessage(Text.literal("Portal jump failed. No fuel was consumed."), true);
