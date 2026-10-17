@@ -1,11 +1,12 @@
 {
   "type": "minecraft:crafting_shaped",
   "pattern": [
-    "III",
-    " C ",
+    "SSS",
+    " I ",
     "CCC"
   ],
   "key": {
+    "S": "darkspace:steel_ingot",
     "I": "minecraft:iron_ingot",
     "C": "minecraft:copper_ingot"
   },
