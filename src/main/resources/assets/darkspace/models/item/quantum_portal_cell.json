@@ -1,6 +1,1 @@
-{
-  "parent": "minecraft:item/generated",
-  "textures": {
-    "layer0": "darkspace:item/quantum_portal_cell"
-  }
-}
+{"parent":"minecraft:item/generated","textures":{"layer0":"darkspace:item/quantum_portal_cell"}}
