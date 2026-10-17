@@ -3,13 +3,16 @@ package com.darkspace.client;
 import com.darkspace.item.PortalItems;
 import com.darkspace.network.PortalNetworking;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
-import net.minecraft.block.Block;
+import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.ButtonWidget;
+import net.minecraft.component.DataComponentTypes;
+import net.minecraft.component.type.NbtComponent;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NbtCompound;
 import net.minecraft.registry.Registries;
 import net.minecraft.text.Text;
 import net.minecraft.util.Hand;
@@ -22,9 +25,9 @@ import java.util.Map;
 
 public final class ShipBlueprintScreen extends Screen {
     private static final int GRID_SIZE = 10;
-    private static final int CELL_SIZE = 20;
-    private static final int GRID_LEFT = 28;
-    private static final int GRID_TOP = 92;
+    private static final int CELL_SIZE = 12;
+    private static final int GRID_LEFT = 14;
+    private static final int GRID_TOP = 68;
 
     private final Hand hand;
     private final Map<String, String> placedBlocks = new LinkedHashMap<>();
@@ -41,6 +44,39 @@ public final class ShipBlueprintScreen extends Screen {
     public ShipBlueprintScreen(Hand hand) {
         super(Text.literal("DarkSpace Ship Blueprint"));
         this.hand = hand;
+        loadSavedBlueprint();
+    }
+
+    private void loadSavedBlueprint() {
+        var player = MinecraftClient.getInstance().player;
+        if (player == null) return;
+        ItemStack stack = player.getStackInHand(hand);
+        NbtComponent customData = stack.get(DataComponentTypes.CUSTOM_DATA);
+        if (customData == null) return;
+        String encoded = customData.copyNbt().getString("blueprint");
+        if (encoded == null || encoded.isBlank()) return;
+
+        String[] sections = encoded.split(";", 2);
+        if (sections.length != 2) return;
+        String[] dimensions = sections[0].split(",");
+        try {
+            if (dimensions.length == 3) {
+                sizeX = clamp(Integer.parseInt(dimensions[0]), 1, 100);
+                sizeY = clamp(Integer.parseInt(dimensions[1]), 1, 100);
+                sizeZ = clamp(Integer.parseInt(dimensions[2]), 1, 100);
+            }
+        } catch (NumberFormatException ignored) {
+            sizeX = sizeY = sizeZ = 10;
+        }
+
+        for (String entry : sections[1].split("\\|")) {
+            String[] pair = entry.split("=", 2);
+            if (pair.length == 2 && pair[0].matches("\\d+,\\d+,\\d+")
+                    && Identifier.tryParse(pair[1]) != null && placedBlocks.size() < 10000) {
+                placedBlocks.put(pair[0], pair[1]);
+            }
+        }
+        status = "Loaded blueprint (" + placedBlocks.size() + " placed blocks).";
     }
 
     @Override
@@ -48,9 +84,8 @@ public final class ShipBlueprintScreen extends Screen {
         refreshPalette();
         clearChildren();
 
-        int right = GRID_LEFT + GRID_SIZE * CELL_SIZE + 20;
-        int controlX = right + 8;
-        int controlWidth = Math.max(112, Math.min(160, width - controlX - 12));
+        int controlX = GRID_LEFT + GRID_SIZE * CELL_SIZE + 14;
+        int controlWidth = Math.max(112, Math.min(170, width - controlX - 12));
 
         for (int z = 0; z < GRID_SIZE; z++) {
             for (int x = 0; x < GRID_SIZE; x++) {
@@ -62,82 +97,83 @@ public final class ShipBlueprintScreen extends Screen {
                     int actualX = pageX * GRID_SIZE + cellX;
                     int actualZ = pageZ * GRID_SIZE + cellZ;
                     if (actualX >= sizeX || actualZ >= sizeZ) return;
-                    String key = key(actualX, layerY, actualZ);
-                    if (placedBlocks.containsKey(key)) {
-                        placedBlocks.remove(key);
+                    String cellKey = key(actualX, layerY, actualZ);
+                    if (placedBlocks.containsKey(cellKey)) {
+                        placedBlocks.remove(cellKey);
                     } else if (!palette.isEmpty()) {
-                        placedBlocks.put(key, Registries.ITEM.getId(palette.get(selectedPaletteIndex)).toString());
+                        placedBlocks.put(cellKey, Registries.ITEM.getId(palette.get(selectedPaletteIndex)).toString());
                     }
                     status = "Blocks placed: " + placedBlocks.size();
-                    rebuildGridLabels();
+                    init();
                 }).dimensions(px, py, CELL_SIZE - 1, CELL_SIZE - 1).build());
             }
         }
 
-        addDrawableChild(ButtonWidget.builder(Text.literal("Block: " + selectedBlockName()), button -> {
+        addDrawableChild(ButtonWidget.builder(Text.literal("Block: " + shorten(selectedBlockName(), 18)), button -> {
             if (!palette.isEmpty()) selectedPaletteIndex = (selectedPaletteIndex + 1) % palette.size();
             status = "Selected: " + selectedBlockName();
             init();
-        }).dimensions(controlX, GRID_TOP, controlWidth, 20).build());
+        }).dimensions(controlX, GRID_TOP, controlWidth, 18).build());
 
-        addDrawableChild(ButtonWidget.builder(Text.literal("Width X: " + sizeX + "  −"), button -> {
+        addDrawableChild(ButtonWidget.builder(Text.literal("X " + sizeX + "  −"), button -> {
             sizeX = Math.max(1, sizeX - 10);
             pageX = Math.min(pageX, Math.max(0, (sizeX - 1) / GRID_SIZE));
             init();
-        }).dimensions(controlX, GRID_TOP + 26, controlWidth / 2 - 2, 20).build());
+        }).dimensions(controlX, GRID_TOP + 22, controlWidth / 2 - 2, 18).build());
         addDrawableChild(ButtonWidget.builder(Text.literal("+"), button -> {
             sizeX = Math.min(100, sizeX + 10);
             init();
-        }).dimensions(controlX + controlWidth / 2 + 2, GRID_TOP + 26, controlWidth / 2 - 2, 20).build());
+        }).dimensions(controlX + controlWidth / 2 + 2, GRID_TOP + 22, controlWidth / 2 - 2, 18).build());
 
-        addDrawableChild(ButtonWidget.builder(Text.literal("Height Y: " + sizeY + "  −"), button -> {
+        addDrawableChild(ButtonWidget.builder(Text.literal("Y " + sizeY + "  −"), button -> {
             sizeY = Math.max(1, sizeY - 10);
             layerY = Math.min(layerY, sizeY - 1);
             init();
-        }).dimensions(controlX, GRID_TOP + 50, controlWidth / 2 - 2, 20).build());
+        }).dimensions(controlX, GRID_TOP + 43, controlWidth / 2 - 2, 18).build());
         addDrawableChild(ButtonWidget.builder(Text.literal("+"), button -> {
             sizeY = Math.min(100, sizeY + 10);
             init();
-        }).dimensions(controlX + controlWidth / 2 + 2, GRID_TOP + 50, controlWidth / 2 - 2, 20).build());
+        }).dimensions(controlX + controlWidth / 2 + 2, GRID_TOP + 43, controlWidth / 2 - 2, 18).build());
 
-        addDrawableChild(ButtonWidget.builder(Text.literal("Length Z: " + sizeZ + "  −"), button -> {
+        addDrawableChild(ButtonWidget.builder(Text.literal("Z " + sizeZ + "  −"), button -> {
             sizeZ = Math.max(1, sizeZ - 10);
             pageZ = Math.min(pageZ, Math.max(0, (sizeZ - 1) / GRID_SIZE));
             init();
-        }).dimensions(controlX, GRID_TOP + 74, controlWidth / 2 - 2, 20).build());
+        }).dimensions(controlX, GRID_TOP + 64, controlWidth / 2 - 2, 18).build());
         addDrawableChild(ButtonWidget.builder(Text.literal("+"), button -> {
             sizeZ = Math.min(100, sizeZ + 10);
             init();
-        }).dimensions(controlX + controlWidth / 2 + 2, GRID_TOP + 74, controlWidth / 2 - 2, 20).build());
+        }).dimensions(controlX + controlWidth / 2 + 2, GRID_TOP + 64, controlWidth / 2 - 2, 18).build());
 
         addDrawableChild(ButtonWidget.builder(Text.literal("Layer Y: " + layerY + "  ▲"), button -> {
             layerY = Math.min(sizeY - 1, layerY + 1);
             init();
-        }).dimensions(controlX, GRID_TOP + 98, controlWidth, 20).build());
+        }).dimensions(controlX, GRID_TOP + 85, controlWidth, 18).build());
         addDrawableChild(ButtonWidget.builder(Text.literal("Layer Y: " + layerY + "  ▼"), button -> {
             layerY = Math.max(0, layerY - 1);
             init();
-        }).dimensions(controlX, GRID_TOP + 122, controlWidth, 20).build());
+        }).dimensions(controlX, GRID_TOP + 106, controlWidth, 18).build());
 
-        addDrawableChild(ButtonWidget.builder(Text.literal("X Page " + (pageX + 1)), button -> {
+        addDrawableChild(ButtonWidget.builder(Text.literal("X page " + (pageX + 1)), button -> {
             pageX = (pageX + 1) % Math.max(1, (sizeX + GRID_SIZE - 1) / GRID_SIZE);
             init();
-        }).dimensions(controlX, GRID_TOP + 146, controlWidth, 20).build());
-        addDrawableChild(ButtonWidget.builder(Text.literal("Z Page " + (pageZ + 1)), button -> {
+        }).dimensions(controlX, GRID_TOP + 127, controlWidth / 2 - 2, 18).build());
+        addDrawableChild(ButtonWidget.builder(Text.literal("Z page " + (pageZ + 1)), button -> {
             pageZ = (pageZ + 1) % Math.max(1, (sizeZ + GRID_SIZE - 1) / GRID_SIZE);
             init();
-        }).dimensions(controlX, GRID_TOP + 170, controlWidth, 20).build());
+        }).dimensions(controlX + controlWidth / 2 + 2, GRID_TOP + 127, controlWidth / 2 - 2, 18).build());
 
         addDrawableChild(ButtonWidget.builder(Text.literal("Save Blueprint"), button -> saveBlueprint())
-                .dimensions(width / 2 - 105, height - 30, 125, 20).build());
+                .dimensions(width / 2 - 94, height - 26, 112, 18).build());
         addDrawableChild(ButtonWidget.builder(Text.literal("Close"), button -> close())
-                .dimensions(width / 2 + 25, height - 30, 80, 20).build());
+                .dimensions(width / 2 + 22, height - 26, 62, 18).build());
     }
 
     private void refreshPalette() {
         palette.clear();
         if (client == null || client.player == null) return;
-        for (ItemStack stack : client.player.getInventory().getMainStacks()) {
+        for (int i = 0; i < client.player.getInventory().size(); i++) {
+            ItemStack stack = client.player.getInventory().getStack(i);
             if (stack.isEmpty()) continue;
             Item item = stack.getItem();
             if (item instanceof BlockItem || item == PortalItems.SHIP_COMPUTER
@@ -159,12 +195,7 @@ public final class ShipBlueprintScreen extends Screen {
         Identifier identifier = Identifier.tryParse(id);
         if (identifier == null) return "?";
         String path = identifier.getPath();
-        return path.length() <= 3 ? path : path.substring(0, 3);
-    }
-
-    private void rebuildGridLabels() {
-        // Reinitializing refreshes the text on each cell while preserving the blueprint map.
-        init();
+        return path.substring(0, Math.min(2, path.length()));
     }
 
     private static String key(int x, int y, int z) {
@@ -172,11 +203,9 @@ public final class ShipBlueprintScreen extends Screen {
     }
 
     private void saveBlueprint() {
-        boolean hasShipComputer = placedBlocks.containsValue("darkspace:ship_computer");
-        boolean hasNavigationComputer = placedBlocks.containsValue("darkspace:navigation_computer");
-        boolean hasHyperdrive = placedBlocks.containsValue("darkspace:hyperdrive");
-
-        if (!hasShipComputer || !hasNavigationComputer || !hasHyperdrive) {
+        if (!placedBlocks.containsValue("darkspace:ship_computer")
+                || !placedBlocks.containsValue("darkspace:navigation_computer")
+                || !placedBlocks.containsValue("darkspace:hyperdrive")) {
             status = "Required: Ship Computer, Navigation Computer, and Hyperdrive.";
             return;
         }
@@ -184,30 +213,37 @@ public final class ShipBlueprintScreen extends Screen {
         StringBuilder encoded = new StringBuilder()
                 .append(sizeX).append(',').append(sizeY).append(',').append(sizeZ).append(';');
         for (Map.Entry<String, String> entry : placedBlocks.entrySet()) {
+            encoded.append(entry.getKey()).append('=').append(entry.getValue()).append('|');
             if (encoded.length() > 30000) {
-                status = "Blueprint is too large to save in one packet. Remove some blocks.";
+                status = "Blueprint too large to save in one packet. Remove some blocks.";
                 return;
             }
-            encoded.append(entry.getKey()).append('=').append(entry.getValue()).append('|');
         }
         ClientPlayNetworking.send(new PortalNetworking.BlueprintSavePayload(hand == Hand.OFF_HAND, encoded.toString()));
-        status = "Blueprint saved to the Ship Computer!";
+        status = "Blueprint sent to the Ship Computer.";
     }
 
     @Override
     public void render(DrawContext context, int mouseX, int mouseY, float delta) {
         renderBackground(context, mouseX, mouseY, delta);
         int panelRight = Math.min(width - 10, GRID_LEFT + GRID_SIZE * CELL_SIZE + 205);
-        context.fill(10, 10, panelRight, height - 10, 0xE6111020);
-        context.fill(10, 10, panelRight, 12, 0xFF8A6DCE);
-        context.drawTextWithShadow(textRenderer, title, GRID_LEFT, 24, 0xFFE1D4FF);
+        context.fill(8, 8, panelRight, height - 8, 0xE6111020);
+        context.fill(8, 8, panelRight, 10, 0xFF8A6DCE);
+        context.drawTextWithShadow(textRenderer, title, GRID_LEFT, 22, 0xFFE1D4FF);
         context.drawTextWithShadow(textRenderer,
-                Text.literal("Blueprint: " + sizeX + " × " + sizeY + " × " + sizeZ + "  |  Y layer " + layerY),
-                GRID_LEFT, 43, 0xFFBFB4D8);
-        context.drawTextWithShadow(textRenderer,
-                Text.literal("Click cells to place/remove the selected inventory block."),
-                GRID_LEFT, 59, 0xFFD0C7E4);
-        context.drawTextWithShadow(textRenderer, Text.literal(status), GRID_LEFT, height - 48, 0xFFFFD580);
+                Text.literal("Size " + sizeX + " × " + sizeY + " × " + sizeZ + " | Layer " + layerY),
+                GRID_LEFT, 39, 0xFFBFB4D8);
+        context.drawTextWithShadow(textRenderer, Text.literal("Place blocks from your inventory."), GRID_LEFT, 53, 0xFFD0C7E4);
+        context.drawTextWithShadow(textRenderer, Text.literal(shorten(status, 56)), GRID_LEFT, height - 42, 0xFFFFD580);
         super.render(context, mouseX, mouseY, delta);
+    }
+
+    private static int clamp(int value, int min, int max) {
+        return Math.max(min, Math.min(max, value));
+    }
+
+    private static String shorten(String value, int maxLength) {
+        if (value == null || value.length() <= maxLength) return value == null ? "" : value;
+        return value.substring(0, Math.max(0, maxLength - 3)) + "...";
     }
 }
