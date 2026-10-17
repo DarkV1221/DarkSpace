@@ -104,17 +104,17 @@ public final class PortalTravelService {
         fuel.decrement(1);
 
         // Nebula-purple portal burst at the arrival point.
-        targetWorld.spawnParticles(ParticleTypes.PORTAL, player.getX(), player.getY() + 1.0, player.getZ(),
-                70, 0.65, 0.9, 0.65, 0.08);
-        targetWorld.spawnParticles(ParticleTypes.REVERSE_PORTAL, player.getX(), player.getY() + 1.0, player.getZ(),
-                35, 0.45, 0.7, 0.45, 0.04);
+        targetWorld.spawnParticles(ParticleTypes.PORTAL, player.getX(), player.getY() + 1.0, player.getZ(), 70,
+                0.65, 0.9, 0.65, 0.08);
+        targetWorld.spawnParticles(ParticleTypes.REVERSE_PORTAL, player.getX(), player.getY() + 1.0, player.getZ(), 35,
+                0.45, 0.7, 0.45, 0.04);
 
         player.sendMessage(Text.literal("Portal jump complete: " + destination.name() + "."), true);
         recordVisit(player);
     }
 
     private static ItemStack findFuel(ServerPlayerEntity player, int requiredTier) {
-        for (ItemStack stack : player.getInventory().main) {
+        for (ItemStack stack : player.getInventory().getMainStacks()) {
             if (!stack.isEmpty() && PortalItems.fuelTier(stack.getItem()) >= requiredTier) {
                 return stack;
             }
