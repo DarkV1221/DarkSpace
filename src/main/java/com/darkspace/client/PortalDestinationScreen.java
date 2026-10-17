@@ -26,9 +26,9 @@ public final class PortalDestinationScreen extends Screen {
 
     @Override
     protected void init() {
-        int buttonWidth = 220;
+        int buttonWidth = 250;
         int left = (this.width - buttonWidth) / 2;
-        int y = 52;
+        int y = 58;
 
         if (destinationIds.isEmpty()) {
             addDrawableChild(ButtonWidget.builder(Text.literal("No discovered planets yet"), button -> {})
@@ -36,7 +36,7 @@ public final class PortalDestinationScreen extends Screen {
             y += 26;
         } else {
             for (String id : destinationIds) {
-                String label = displayName(id);
+                String label = displayName(id) + "  •  " + fuelName(id);
                 addDrawableChild(ButtonWidget.builder(Text.literal(label), button -> {
                     ClientPlayNetworking.send(new PortalNetworking.TravelRequestPayload(id));
                     if (client != null) client.setScreen(null);
@@ -54,7 +54,7 @@ public final class PortalDestinationScreen extends Screen {
     public void render(DrawContext context, int mouseX, int mouseY, float delta) {
         renderBackground(context, mouseX, mouseY, delta);
         context.drawCenteredTextWithShadow(textRenderer, title, width / 2, 20, 0xE6D8FF);
-        context.drawCenteredTextWithShadow(textRenderer, Text.literal("Each jump consumes fuel."), width / 2, 36, 0x9CDDE3);
+        context.drawCenteredTextWithShadow(textRenderer, Text.literal("Each jump consumes one fuel cell."), width / 2, 37, 0x9CDDE3);
         super.render(context, mouseX, mouseY, delta);
     }
 
@@ -67,6 +67,14 @@ public final class PortalDestinationScreen extends Screen {
             case "darkspace:shattered_expanse" -> "Shattered Expanse";
             case "darkspace:outer_reaches" -> "Outer Reaches";
             default -> id;
+        };
+    }
+
+    private static String fuelName(String id) {
+        return switch (id) {
+            case "darkspace:nox", "darkspace:shattered_expanse" -> "Refined Cell";
+            case "darkspace:outer_reaches" -> "Quantum Cell";
+            default -> "Portal Cell";
         };
     }
 }
