@@ -46,7 +46,7 @@ public final class PortalNetworking {
     public record BlueprintSavePayload(boolean offHand, String blueprint) implements CustomPayload {
         public static final Id<BlueprintSavePayload> ID = new Id<>(Identifier.of(DarkSpace.MOD_ID, "blueprint_save"));
         public static final PacketCodec<RegistryByteBuf, BlueprintSavePayload> CODEC =
-                PacketCodec.tuple(PacketCodecs.BOOL, BlueprintSavePayload::offHand,
+                PacketCodec.tuple(PacketCodecs.BOOLEAN, BlueprintSavePayload::offHand,
                         PacketCodecs.STRING, BlueprintSavePayload::blueprint, BlueprintSavePayload::new);
 
         @Override
