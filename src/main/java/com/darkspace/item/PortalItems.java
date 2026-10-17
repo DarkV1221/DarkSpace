@@ -1,7 +1,9 @@
 package com.darkspace.item;
 
 import com.darkspace.DarkSpace;
+import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemGroups;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
 import net.minecraft.util.Identifier;
@@ -19,7 +21,13 @@ public final class PortalItems {
     }
 
     public static void initialize() {
-        DarkSpace.LOGGER.info("Registering DarkSpace portal items.");
+        ItemGroupEvents.modifyEntriesEvent(ItemGroups.TOOLS).register(entries -> entries.add(PLANETARY_PORTAL_GUN));
+        ItemGroupEvents.modifyEntriesEvent(ItemGroups.INGREDIENTS).register(entries -> {
+            entries.add(PORTAL_CELL);
+            entries.add(REFINED_PORTAL_CELL);
+            entries.add(QUANTUM_PORTAL_CELL);
+        });
+        DarkSpace.LOGGER.info("Registered DarkSpace portal items.");
     }
 
     public static int fuelTier(Item item) {
