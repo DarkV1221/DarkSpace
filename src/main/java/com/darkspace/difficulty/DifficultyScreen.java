@@ -28,15 +28,22 @@ public final class DifficultyScreen extends Screen {
                 }).dimensions(center - 100, top, 200, 20).build());
             top += 25;
         }
+
         this.addDrawableChild(ButtonWidget.builder(Text.literal("Apply"), button ->
             client.setScreen(new ConfirmScreen(confirmed -> {
-                if (confirmed) DifficultyConfig.setDifficulty(selected);
+                if (confirmed) {
+                    DifficultyConfig.setDifficulty(selected);
+                }
                 client.setScreen(parent);
-            }, Text.literal("Apply " + selected.label() + " difficulty?"),
-               Text.literal("This saves the choice. Space-survival effects are not implemented yet.")))
-            .dimensions(center - 100, top + 4, 98, 20).build());
+            },
+                Text.literal("Apply " + selected.label() + " difficulty?"),
+                Text.literal("This saves the choice. Space-survival effects are not implemented yet.")
+            ))
+        ).dimensions(center - 100, top + 4, 98, 20).build());
+
         this.addDrawableChild(ButtonWidget.builder(Text.literal("Cancel"), button ->
-            client.setScreen(parent)).dimensions(center + 2, top + 4, 98, 20).build());
+            client.setScreen(parent)
+        ).dimensions(center + 2, top + 4, 98, 20).build());
     }
 
     @Override
@@ -49,5 +56,7 @@ public final class DifficultyScreen extends Screen {
     }
 
     @Override
-    public void close() { client.setScreen(parent); }
+    public void close() {
+        client.setScreen(parent);
+    }
 }
