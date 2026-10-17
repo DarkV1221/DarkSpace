@@ -1,7 +1,5 @@
 package com.darkspace.item;
 
-import com.darkspace.client.ShipBlueprintScreen;
-import net.minecraft.client.MinecraftClient;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.util.ActionResult;
@@ -13,9 +11,6 @@ public final class ShipComputerItem extends Item {
 
     @Override
     public ActionResult use(World world, PlayerEntity user, Hand hand) {
-        if (world.isClient) {
-            MinecraftClient.getInstance().setScreen(new ShipBlueprintScreen());
-        }
         return ActionResult.SUCCESS;
     }
 }
