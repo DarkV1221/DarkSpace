@@ -19,6 +19,7 @@ public final class PortalItems {
     public static final Item REFINED_PORTAL_CELL = register("refined_portal_cell", Item::new);
     public static final Item QUANTUM_PORTAL_CELL = register("quantum_portal_cell", Item::new);
     public static final Item RADIANT_PILLAR_SHIP = register("radiant_pillar_ship", RadiantPillarShipItem::new);
+    public static final Item STEEL_INGOT = register("steel_ingot", Item::new);
     public static final Item SHIP_COMPUTER = register("ship_computer", ShipComputerItem::new);
     public static final Item SHIP_BLUEPRINT = register("ship_blueprint", ShipBlueprintItem::new);
 
@@ -34,6 +35,7 @@ public final class PortalItems {
                         entries.add(REFINED_PORTAL_CELL);
                         entries.add(QUANTUM_PORTAL_CELL);
                         entries.add(RADIANT_PILLAR_SHIP);
+                        entries.add(STEEL_INGOT);
                         entries.add(SHIP_COMPUTER);
                         entries.add(SHIP_BLUEPRINT);
                     })
@@ -62,8 +64,9 @@ public final class PortalItems {
                     entries.add(PORTAL_CELL);
                     entries.add(REFINED_PORTAL_CELL);
                     entries.add(QUANTUM_PORTAL_CELL);
+                    entries.add(STEEL_INGOT);
                 });
-        DarkSpace.LOGGER.info("Registered DarkSpace items, ship computer, and creative tab.");
+        DarkSpace.LOGGER.info("Registered DarkSpace items, steel ingot, ship computer, and creative tab.");
     }
 
     public static int fuelTier(Item item) {
