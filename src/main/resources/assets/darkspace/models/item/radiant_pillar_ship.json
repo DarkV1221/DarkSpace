@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "darkspace:item/radiant_pillar_ship"
+  }
+}

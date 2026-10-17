@@ -1,6 +1,7 @@
 package com.darkspace.mixin.client;
 
 import com.darkspace.difficulty.DifficultyScreen;
+import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.GameMenuScreen;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.ButtonWidget;
@@ -16,11 +17,11 @@ public abstract class GameMenuScreenMixin extends Screen {
         super(title);
     }
 
-    @Inject(method = "init", at = @At("TAIL"))
+    @Inject(method = "init", at = @At("TAIL"), require = 0)
     private void darkspace$addDifficultyButton(CallbackInfo ci) {
         this.addDrawableChild(ButtonWidget.builder(Text.literal("DarkSpace Difficulty"), button ->
-            this.client.setScreen(new DifficultyScreen(this)))
-            .dimensions(this.width / 2 - 100, this.height / 4 + 120, 200, 20)
-            .build());
+                        MinecraftClient.getInstance().setScreen(new DifficultyScreen(this)))
+                .dimensions(this.width / 2 - 100, this.height / 4 + 120, 200, 20)
+                .build());
     }
 }

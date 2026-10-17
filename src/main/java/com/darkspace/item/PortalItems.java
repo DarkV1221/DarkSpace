@@ -18,6 +18,7 @@ public final class PortalItems {
     public static final Item PORTAL_CELL = register("portal_cell", Item::new);
     public static final Item REFINED_PORTAL_CELL = register("refined_portal_cell", Item::new);
     public static final Item QUANTUM_PORTAL_CELL = register("quantum_portal_cell", Item::new);
+    public static final Item RADIANT_PILLAR_SHIP = register("radiant_pillar_ship", RadiantPillarShipItem::new);
 
     public static final ItemGroup PORTAL_ITEM_GROUP = Registry.register(
             Registries.ITEM_GROUP,
@@ -30,6 +31,7 @@ public final class PortalItems {
                         entries.add(PORTAL_CELL);
                         entries.add(REFINED_PORTAL_CELL);
                         entries.add(QUANTUM_PORTAL_CELL);
+                        entries.add(RADIANT_PILLAR_SHIP);
                     })
                     .build()
     );
@@ -44,9 +46,11 @@ public final class PortalItems {
     }
 
     public static void initialize() {
-        // Also list portal items in familiar vanilla tabs.
         net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents.modifyEntriesEvent(ItemGroups.TOOLS)
-                .register(entries -> entries.add(PLANETARY_PORTAL_GUN));
+                .register(entries -> {
+                    entries.add(PLANETARY_PORTAL_GUN);
+                    entries.add(RADIANT_PILLAR_SHIP);
+                });
         net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents.modifyEntriesEvent(ItemGroups.INGREDIENTS)
                 .register(entries -> {
                     entries.add(PORTAL_CELL);
