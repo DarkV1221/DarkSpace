@@ -1,7 +1,7 @@
 package com.darkspace;
 
 import com.darkspace.item.PortalItems;
-import com.darkspace.network.PortalNetworking;
+import com.darkspace.network.PortalNetworking;\nimport com.darkspace.network.ShipBlueprintNetworking;
 import com.darkspace.portal.PortalTravelService;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
@@ -15,7 +15,7 @@ public final class DarkSpace implements ModInitializer {
     @Override
     public void onInitialize() {
         PortalItems.initialize();
-        PortalNetworking.initialize();
+        PortalNetworking.initialize();\n        ShipBlueprintNetworking.initialize();
 
         // Discovery tags are saved with player data, so they persist between sessions.
         ServerTickEvents.END_WORLD_TICK.register(world ->
