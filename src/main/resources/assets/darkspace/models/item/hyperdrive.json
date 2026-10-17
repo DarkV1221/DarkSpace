@@ -1,6 +1,39 @@
 {
-  "parent": "minecraft:item/generated",
+  "parent": "minecraft:block/block",
   "textures": {
-    "layer0": "minecraft:item/ender_eye"
+    "particle": "minecraft:block/iron_block",
+    "casing": "minecraft:block/iron_block",
+    "copper": "minecraft:block/copper_block",
+    "core": "minecraft:block/crying_obsidian"
+  },
+  "elements": [
+    {
+      "from": [2, 2, 2],
+      "to": [14, 14, 14],
+      "faces": {
+        "north": { "texture": "#copper" },
+        "south": { "texture": "#casing" },
+        "east": { "texture": "#casing" },
+        "west": { "texture": "#casing" },
+        "up": { "texture": "#casing" },
+        "down": { "texture": "#casing" }
+      }
+    },
+    {
+      "from": [5, 5, 1],
+      "to": [11, 11, 2],
+      "faces": {
+        "north": { "texture": "#core" },
+        "south": { "texture": "#core" }
+      }
+    }
+  ],
+  "display": {
+    "gui": { "rotation": [25, 135, 0], "translation": [0, 0, 0], "scale": [0.85, 0.85, 0.85] },
+    "ground": { "rotation": [0, 0, 0], "translation": [0, 3, 0], "scale": [0.5, 0.5, 0.5] },
+    "fixed": { "rotation": [0, 0, 0], "translation": [0, 0, 0], "scale": [0.75, 0.75, 0.75] },
+    "thirdperson_righthand": { "rotation": [75, 45, 0], "translation": [0, 2.5, 0], "scale": [0.5, 0.5, 0.5] },
+    "firstperson_righthand": { "rotation": [0, 45, 0], "translation": [0, 0, 0], "scale": [0.55, 0.55, 0.55] },
+    "firstperson_lefthand": { "rotation": [0, 225, 0], "translation": [0, 0, 0], "scale": [0.55, 0.55, 0.55] }
   }
 }
