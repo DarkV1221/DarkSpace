@@ -6,5 +6,7 @@
   "item.darkspace.radiant_pillar_ship": "Radiant Pillar Ship",
   "item.darkspace.steel_ingot": "Steel Ingot",
   "item.darkspace.ship_computer": "Ship Computer",
+  "item.darkspace.navigation_computer": "Navigation Computer",
+  "item.darkspace.hyperdrive": "Hyperdrive",
   "itemGroup.darkspace.portal_items": "DarkSpace"
 }
